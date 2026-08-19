@@ -138,6 +138,10 @@
     .dsp-bar { padding: 6px 10px; gap: 6px; }
     .btn-preset { padding: 4px 9px; font-size: 10.5px; }
     input[type="range"] { width: 66px; height: 6px; }
+    input.main-vol-slider[type="range"] { width: auto; height: 12px; }
+    .main-vol-slider::-webkit-slider-thumb { width: 22px; height: 22px; border-width: 4px; }
+    .main-vol-row { padding: 6px 12px; }
+    .main-vol-pct { font-size: 12px; min-width: 36px; }
     .dsp-slider-group label { font-size: 10px; }
     .toolbar { padding: 5px 10px; }
     .quickslots-strip, .recent-strip { padding: 4px 10px; }
@@ -401,6 +405,34 @@
   }
 
   .preset-btns { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; align-items: center; }
+
+  /* ANA SES ÇUBUĞU (ana ekran, kalın ve belirgin) */
+  .main-vol-row {
+    display: flex; align-items: center; gap: 12px; background: #101114;
+    border: 1px solid #23252b; border-radius: 14px; padding: 10px 16px; margin-top: 6px;
+  }
+  .main-vol-slider {
+    flex: 1; height: 16px; -webkit-appearance: none; appearance: none;
+    background: linear-gradient(90deg, var(--accent-cyan) 0%, var(--accent-cyan) var(--val, 85%), #23252b var(--val, 85%), #23252b 100%);
+    border-radius: 10px; outline: none; cursor: pointer;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5), 0 0 10px -3px var(--accent-cyan);
+  }
+  .main-vol-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 32px; height: 32px; border-radius: 50%;
+    background: #fff; border: 5px solid var(--accent-cyan); cursor: pointer;
+    box-shadow: 0 0 14px rgba(0,229,255,0.75);
+  }
+  .main-vol-slider::-moz-range-track { height: 16px; border-radius: 10px; background: #23252b; }
+  .main-vol-slider::-moz-range-progress { height: 16px; border-radius: 10px; background: var(--accent-cyan); }
+  .main-vol-slider::-moz-range-thumb {
+    width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 5px solid var(--accent-cyan);
+    box-shadow: 0 0 14px rgba(0,229,255,0.75); cursor: pointer;
+  }
+  .main-vol-pct {
+    font-family: 'Consolas', monospace; font-size: 15px; font-weight: 900; color: var(--accent-cyan);
+    min-width: 46px; text-align: right; flex-shrink: 0;
+  }
+
   .btn-preset {
     background: linear-gradient(180deg, #2b2f38 0%, #1c1e24 100%);
     border: 1px solid #3c404d; color: #fff;
@@ -632,6 +664,57 @@
   .tools-lap-item.best-lap { border-color: var(--accent-green); box-shadow: 0 0 8px -2px var(--accent-green); }
   .tools-lap-item.best-lap .lap-delta { color: var(--accent-green); }
 
+  /* ===== KANAL LİSTESİ PANELİ (büyük, efektli, anlaşılır) ===== */
+  .channel-list-box {
+    width: min(980px, 96vw); max-height: 88vh; padding: 20px 22px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .clb-header { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .clb-title { font-size: 22px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 10px; }
+  .clb-count {
+    background: var(--accent-cyan); color: #002b33; font-size: 13px; font-weight: 900;
+    border-radius: 20px; padding: 3px 12px;
+  }
+  .clb-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px;
+    overflow-y: auto; padding: 4px 4px 8px; flex: 1; min-height: 0;
+  }
+  .clb-card {
+    --card-accent: #00e5ff;
+    position: relative; background: #101114; border: 2px solid #23252b; border-radius: 16px;
+    padding: 16px 16px 14px; text-align: left; cursor: pointer; overflow: hidden;
+    display: flex; flex-direction: column; gap: 8px;
+    opacity: 0; transform: translateY(14px) scale(0.96);
+    animation: clbCardIn 0.4s cubic-bezier(.2,.8,.2,1) forwards;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  @keyframes clbCardIn { to { opacity: 1; transform: translateY(0) scale(1); } }
+  .clb-card::before {
+    content: ""; position: absolute; inset: 0; border-radius: 14px; pointer-events: none;
+    background: radial-gradient(circle at 30% 0%, color-mix(in srgb, var(--card-accent) 18%, transparent), transparent 65%);
+  }
+  .clb-card:hover, .clb-card:focus-visible {
+    border-color: var(--card-accent); box-shadow: 0 0 20px -4px var(--card-accent), 0 6px 18px rgba(0,0,0,0.4);
+    transform: translateY(-3px) scale(1.02); outline: none;
+  }
+  .clb-card:active { transform: scale(0.97); }
+  .clb-card.active {
+    border-color: var(--card-accent); background: color-mix(in srgb, var(--card-accent) 10%, #101114);
+    box-shadow: 0 0 22px -4px var(--card-accent);
+  }
+  .clb-card-top { display: flex; align-items: center; justify-content: space-between; }
+  .clb-card-freq {
+    font-family: 'Consolas', monospace; font-weight: 900; font-size: 15px; color: var(--card-accent);
+  }
+  .clb-card-name { font-size: 19px; font-weight: 900; color: #fff; line-height: 1.2; }
+  .clb-card-cat { font-size: 12px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.4px; }
+  .clb-eq { display: flex; align-items: flex-end; gap: 2px; height: 15px; }
+  .clb-eq span { width: 3px; background: var(--card-accent); border-radius: 1px; animation: rowEqBar 0.9s ease-in-out infinite; }
+  .clb-eq span:nth-child(1) { height: 40%; animation-delay: 0s; }
+  .clb-eq span:nth-child(2) { height: 100%; animation-delay: .15s; }
+  .clb-eq span:nth-child(3) { height: 65%; animation-delay: .3s; }
+
+
   /* ================================================================
      TAM EKRAN NAVİGASYON PANELİ (modern gösterge paneli, gece/gündüz)
      ================================================================ */
@@ -784,6 +867,15 @@
   .ngsb-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .ngsb-label { font-size: 13px; font-weight: 900; color: #fff; }
   .ngsb-hint { font-size: 10.5px; color: var(--text-muted); line-height: 1.5; margin-top: 8px; }
+
+  /* GPS TEŞHİS / YARDIM KUTUSU */
+  .nav-help-box {
+    display: none; background: rgba(255,145,0,0.08); border: 1px solid var(--accent-orange);
+    border-radius: 14px; padding: 14px 16px; margin: 0 0 10px; text-align: left;
+  }
+  .nav-help-box.show { display: block; }
+  .nhb-title { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+  .nhb-body { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; white-space: pre-line; }
   .nav-toggle-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
   .nav-switch-label {
     display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800;
@@ -1078,7 +1170,7 @@
         ⏱️ <span id="sleepTimerDisplay">00:00</span>
       </div>
       <button class="btn-preset" id="themeToggle" tabindex="0" data-row="0"><span id="themeIcon">🌙</span> Gece</button>
-      <button class="btn-preset" id="autoThemeBtn" tabindex="0" data-row="0">🌗 Oto Tema</button>
+      <button class="btn-preset" id="channelListBtn" tabindex="0" data-row="0">📻 Kanal Listesi</button>
       <button class="btn-preset" id="toolsBtn" tabindex="0" data-row="0">⏱️ Kronometre</button>
       <button class="btn-preset" id="gpsBtn" tabindex="0" data-row="0">📍 Navigasyon</button>
       <button class="btn-preset" id="drivingModeBtn" tabindex="0" data-row="0">🚗 Sürüş Modu</button>
@@ -1193,9 +1285,10 @@
       <button class="toggle-btn" id="loudnessToggle" tabindex="0" data-row="3">🎚️ Normalize</button>
     </div>
 
-    <div class="dsp-controls">
-      <strong style="color:#fff; font-size:13px;">ANA SES:</strong>
-      <input type="range" id="volume" min="0" max="1" step="0.05" value="0.85" style="width:110px;" tabindex="0" data-row="4">
+    <div class="dsp-controls main-vol-row">
+      <strong style="color:#fff; font-size:14px;">🔊 ANA SES:</strong>
+      <input type="range" class="main-vol-slider" id="volume" min="0" max="1" step="0.05" value="0.85" tabindex="0" data-row="4">
+      <span class="main-vol-pct" id="mainVolPct">85%</span>
     </div>
   </div>
 
@@ -1306,6 +1399,12 @@
       </div>
     </div>
     <div class="nav-gps-label" id="gpsStatus">GPS Kapalı</div>
+
+    <div class="nav-help-box" id="gpsHelpBox">
+      <div class="nhb-title" id="gpsHelpTitle">Başlık</div>
+      <div class="nhb-body" id="gpsHelpBody">Açıklama</div>
+      <button class="btn-preset confirm" id="gpsHelpCloseBtn" tabindex="0" data-row="1" style="width:100%; margin-top:8px;">Anladım</button>
+    </div>
 
     <div class="nav-main-row">
       <div class="nav-side-cards">
@@ -1425,6 +1524,17 @@
       </label>
     </div>
     <button class="btn-preset confirm" id="navSettingsCloseBtn" tabindex="0" data-row="10" style="width:100%;">Kapat</button>
+  </div>
+</div>
+
+<!-- Kanal Listesi Paneli -->
+<div class="modal-overlay" id="channelListModal">
+  <div class="modal-box channel-list-box">
+    <div class="clb-header">
+      <div class="clb-title">📻 Radyo Kanalları <span class="clb-count" id="clbCount">0</span></div>
+      <button class="nav-icon-btn small" id="channelListCloseBtn" tabindex="0" data-row="0" title="Kapat">✕</button>
+    </div>
+    <div class="clb-grid" id="clbGrid"></div>
   </div>
 </div>
 
@@ -2282,14 +2392,18 @@ nextBtn.addEventListener('click', () => step(1));
 
 /* ANA SES BARI (normal + sürüş modu, iki yönlü senkron) */
 const drivingVolumeSlider = document.getElementById('drivingVolumeRow') ? document.getElementById('drivingVolumeSlider') : null;
+const mainVolPct = document.getElementById('mainVolPct');
 function syncVolumeUI(vol) {
   volumeSlider.value = vol;
+  volumeSlider.style.setProperty('--val', (vol * 100) + '%');
+  if (mainVolPct) mainVolPct.textContent = Math.round(vol * 100) + '%';
   if (drivingVolumeSlider) {
     drivingVolumeSlider.value = vol;
     drivingVolumeSlider.style.setProperty('--val', (vol * 100) + '%');
   }
 }
 volumeSlider.addEventListener('input', () => { audio.volume = parseFloat(volumeSlider.value); syncVolumeUI(audio.volume); });
+syncVolumeUI(audio.volume);
 if (drivingVolumeSlider) {
   drivingVolumeSlider.addEventListener('input', () => { audio.volume = parseFloat(drivingVolumeSlider.value); syncVolumeUI(audio.volume); });
   drivingVolumeSlider.style.setProperty('--val', (audio.volume * 100) + '%');
@@ -2674,23 +2788,49 @@ function onGpsError(err) {
   }
 
   if (err.code === 1) {
-    gpsStatus.textContent = 'Konum İzni Reddedildi';
+    gpsStatus.textContent = '❌ Konum İzni Reddedildi/Bloklu';
+    showGpsHelp('denied');
+  } else if (err.code === 2) {
+    gpsStatus.textContent = '❌ Konum Bilgisi Alınamadı';
+    if (gpsRetryCount >= 3) showGpsHelp('unavailable');
+    retryGpsWithBackoff();
   } else {
-    gpsStatus.textContent = 'Konum Alınamadı — Yeniden Deneniyor...';
-    // Otomatik yeniden deneme: Wi-Fi/İnternet bağlantısı gecikmeli gelmiş olabilir
-    if (gpsRetryCount < 8) {
-      gpsRetryCount++;
-      clearTimeout(gpsRetryTimer);
-      gpsRetryTimer = setTimeout(() => { stopGpsWatch(); startGpsWatch(); }, 4000);
-    } else {
-      gpsStatus.textContent = 'Konum Alınamadı — "Tekrar Dene" butonunu kullanın';
-    }
+    gpsStatus.textContent = '❌ Konum Zaman Aşımı';
+    if (gpsRetryCount >= 3) showGpsHelp('timeout');
+    retryGpsWithBackoff();
+  }
+}
+
+function retryGpsWithBackoff() {
+  if (gpsRetryCount < 8) {
+    gpsRetryCount++;
+    gpsStatus.textContent += ' — Yeniden deneniyor (' + gpsRetryCount + '/8)';
+    clearTimeout(gpsRetryTimer);
+    gpsRetryTimer = setTimeout(() => { stopGpsWatch(); startGpsWatch(); }, 4000);
+  } else {
+    gpsStatus.textContent = 'Konum Alınamadı — "Tekrar Dene" butonunu kullanın';
   }
 }
 
 function startGpsWatch() {
   if (gpsWatchId !== null) return;
-  if (!navigator.geolocation) { gpsStatus.textContent = 'Bu Cihaz Konum Servisini Desteklemiyor'; return; }
+
+  // 1) Tarayıcı Geolocation API'sini destekliyor mu?
+  if (!navigator.geolocation) {
+    gpsStatus.textContent = '❌ Bu Tarayıcı Konum Servisini Desteklemiyor';
+    showGpsHelp('unsupported');
+    return;
+  }
+
+  // 2) GÜVENLİ BAĞLANTI KONTROLÜ — en yaygın arıza nedeni budur.
+  // Tarayıcılar, HTTPS olmayan (veya localhost dışı) sayfalarda konum iznini
+  // hiç göstermez / sessizce reddeder. Dosya file:// ile açıldıysa da aynı sorun oluşur.
+  if (window.isSecureContext === false) {
+    gpsStatus.textContent = '❌ Güvenli Bağlantı (HTTPS) Gerekli';
+    showGpsHelp('insecure');
+    return;
+  }
+
   gpsStatus.textContent = useHighAccuracy ? 'GPS Aranıyor...' : 'Ağ Konumu Aranıyor (Wi-Fi/İnternet)...';
   gpsWatchId = navigator.geolocation.watchPosition(onGpsUpdate, onGpsError, {
     enableHighAccuracy: useHighAccuracy, maximumAge: 3000, timeout: 20000
@@ -2702,8 +2842,40 @@ function stopGpsWatch() {
 function retryGps() {
   gpsRetryCount = 0;
   clearTimeout(gpsRetryTimer);
+  if (gpsHelpBox) gpsHelpBox.classList.remove('show');
   stopGpsWatch();
   startGpsWatch();
+}
+
+/* ---- GPS Yardım/Teşhis Paneli ---- */
+const GPS_HELP_TEXTS = {
+  insecure: {
+    title: '🔒 Güvenli Bağlantı (HTTPS) Gerekiyor',
+    body: 'Tarayıcılar, konum bilgisini sadece HTTPS ile açılan sayfalarda veya "localhost" adresinde verir. Bu dosyayı doğrudan (dosya simgesine çift tıklayarak, file:// olarak) veya düz http:// adresiyle açtıysanız, tarayıcı konum izni penceresini hiç göstermez — sorununuzun en olası nedeni budur.\n\nÇözüm: Dosyayı ücretsiz bir HTTPS barındırma (Netlify, GitHub Pages, Vercel vb.) üzerinden yükleyip o adresten açın, ya da telefonunuzda basit bir HTTPS yerel sunucu (örn. "yerel sunucu" uygulamaları) ile sunup aracın tarayıcısında o adresi kullanın.'
+  },
+  denied: {
+    title: '🚫 Konum İzni Engellenmiş',
+    body: 'Bu sayfa için konum izni daha önce reddedilmiş veya engellenmiş. Tarayıcı otomatik olarak tekrar sormaz.\n\nÇözüm: Aracın tarayıcısında adres çubuğunun solundaki kilit/site bilgisi simgesine dokunun → "İzinler" veya "Site Ayarları" → Konum → "İzin Ver" yapın, sonra sayfayı yenileyip "Tekrar Dene"ye basın.'
+  },
+  unavailable: {
+    title: '📡 Konum Bilgisi Alınamıyor',
+    body: 'Cihaz konum servislerine ulaşamıyor. Kontrol edin:\n• Telefonunuzda Konum (GPS) servisi açık mı?\n• Wi-Fi paylaşımı (Hotspot) hâlâ aktif mi ve aracın multimedyası ona bağlı mı?\n• Telefonda mobil veri/internet çalışıyor mu? (Ağ tabanlı konum internet gerektirir)\n\nBunları kontrol ettikten sonra "Tekrar Dene"ye basın.'
+  },
+  timeout: {
+    title: '⏱️ Zaman Aşımı',
+    body: 'Konum belirli sürede alınamadı. Genellikle zayıf/yok internet bağlantısından kaynaklanır.\n\nÇözüm: Wi-Fi paylaşımının aktif olduğundan ve telefonun internete bağlı olduğundan emin olun, sonra "Tekrar Dene"ye basın. Ayarlar panelinden "Yüksek Hassasiyet GPS" kapalıysa, bu ağ tabanlı konum kullanıldığı anlamına gelir — internet şart.'
+  },
+  unsupported: {
+    title: '⚠️ Desteklenmeyen Tarayıcı',
+    body: 'Bu tarayıcı/WebView konum servisini (Geolocation API) desteklemiyor. Aracın multimedya sistemi eski bir tarayıcı motoru kullanıyor olabilir. Mümkünse aracın tarayıcı/sistem yazılımını güncelleyin veya Chrome tabanlı güncel bir tarayıcı kullanın.'
+  }
+};
+function showGpsHelp(key) {
+  const info = GPS_HELP_TEXTS[key];
+  if (!info || !gpsHelpBox) return;
+  gpsHelpTitle.textContent = info.title;
+  gpsHelpBody.textContent = info.body;
+  gpsHelpBox.classList.add('show');
 }
 
 gpsBtn.addEventListener('click', () => {
@@ -2749,6 +2921,11 @@ navSettingsCloseBtn.addEventListener('click', () => navSettingsSheet.classList.r
 
 const navHighAccuracyToggle = document.getElementById('navHighAccuracyToggle');
 const navRetryGpsBtn = document.getElementById('navRetryGpsBtn');
+const gpsHelpBox = document.getElementById('gpsHelpBox');
+const gpsHelpTitle = document.getElementById('gpsHelpTitle');
+const gpsHelpBody = document.getElementById('gpsHelpBody');
+const gpsHelpCloseBtn = document.getElementById('gpsHelpCloseBtn');
+if (gpsHelpCloseBtn) gpsHelpCloseBtn.addEventListener('click', () => gpsHelpBox.classList.remove('show'));
 navHighAccuracyToggle.addEventListener('change', () => {
   useHighAccuracy = navHighAccuracyToggle.checked;
   retryGps();
@@ -2784,40 +2961,7 @@ gpsTripResetBtn.addEventListener('click', () => {
   gpsTripToggleBtn.classList.remove('active');
 });
 
-/* ============ OTO GECE/GÜNDÜZ TEMASI ============ */
-const autoThemeBtn = document.getElementById('autoThemeBtn');
-let autoThemeOn = false, autoThemeInterval = null;
-
-function applyThemeByTime() {
-  const hour = new Date().toLocaleString('en-US', { timeZone: 'Europe/Istanbul', hour: 'numeric', hour12: false });
-  const h = parseInt(hour, 10);
-  const shouldBeDark = (h >= 19 || h < 7);
-  if (shouldBeDark) {
-    document.documentElement.removeAttribute('data-theme');
-    themeIcon.textContent = '🌙';
-  } else {
-    document.documentElement.setAttribute('data-theme', 'light');
-    themeIcon.textContent = '☀️';
-  }
-}
-
-autoThemeBtn.addEventListener('click', () => {
-  autoThemeOn = !autoThemeOn;
-  autoThemeBtn.classList.toggle('active', autoThemeOn);
-  if (autoThemeOn) {
-    applyThemeByTime();
-    autoThemeInterval = setInterval(applyThemeByTime, 60000);
-  } else if (autoThemeInterval) {
-    clearInterval(autoThemeInterval);
-  }
-});
-
 themeToggle.addEventListener('click', () => {
-  if (autoThemeOn) {
-    autoThemeOn = false;
-    autoThemeBtn.classList.remove('active');
-    if (autoThemeInterval) clearInterval(autoThemeInterval);
-  }
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
   if (isLight) {
     document.documentElement.removeAttribute('data-theme');
@@ -2827,6 +2971,64 @@ themeToggle.addEventListener('click', () => {
     themeIcon.textContent = '☀️';
   }
 });
+
+/* ============ KANAL LİSTESİ PANELİ (büyük, efektli seçim ekranı) ============ */
+const channelListBtn = document.getElementById('channelListBtn');
+const channelListModal = document.getElementById('channelListModal');
+const channelListCloseBtn = document.getElementById('channelListCloseBtn');
+const clbGrid = document.getElementById('clbGrid');
+const clbCount = document.getElementById('clbCount');
+
+function renderChannelListGrid() {
+  clbGrid.innerHTML = '';
+  clbCount.textContent = ORDER.length;
+  ORDER.forEach((key, i) => {
+    const s = STATIONS[key];
+    if (!s) return;
+    const isActive = key === currentKey;
+    const card = document.createElement('button');
+    card.className = 'clb-card' + (isActive ? ' active' : '');
+    card.type = 'button';
+    card.tabIndex = 0;
+    card.style.setProperty('--card-accent', s.accent || '#00e5ff');
+    card.style.animationDelay = Math.min(i * 0.025, 0.6) + 's';
+    card.innerHTML = `
+      <div class="clb-card-top">
+        <span class="clb-card-freq">${s.freq} MHz</span>
+        ${isActive && isPlaying ? '<span class="clb-eq"><span></span><span></span><span></span></span>' : ''}
+      </div>
+      <div class="clb-card-name">${s.title}</div>
+      <div class="clb-card-cat">${s.cat || ''}</div>
+    `;
+    card.addEventListener('click', () => {
+      selectStation(key);
+      play();
+      closeChannelListPanel();
+    });
+    clbGrid.appendChild(card);
+  });
+}
+
+function openChannelListPanel() {
+  renderChannelListGrid();
+  channelListModal.classList.add('show');
+  channelListBtn.classList.add('active');
+  setTimeout(() => { try { clbGrid.querySelector('.clb-card').focus(); } catch (e) {} }, 60);
+}
+function closeChannelListPanel() {
+  channelListModal.classList.remove('show');
+  channelListBtn.classList.remove('active');
+}
+
+channelListBtn.addEventListener('click', () => {
+  if (channelListModal.classList.contains('show')) {
+    closeChannelListPanel(); // aynı tuşa tekrar basınca panel kapanır, çalan istasyon çalmaya devam eder
+  } else {
+    openChannelListPanel();
+  }
+});
+channelListCloseBtn.addEventListener('click', closeChannelListPanel);
+channelListModal.addEventListener('click', (e) => { if (e.target === channelListModal) closeChannelListPanel(); });
 
 /* ============ SÜRÜŞ MODU ============ */
 const drivingModeBtn = document.getElementById('drivingModeBtn');
@@ -3186,6 +3388,66 @@ document.getElementById('btnXcConnect').addEventListener('click', async () => {
     } else { alert('Xtream sunucusundan yayın alınamadı veya bilgiler hatalı.'); }
   } catch (e) {
     alert('Xtream sunucusuna bağlanılamadı (CORS/Ağ Hatası).');
+  }
+});
+
+/* ================================================================
+   DİREKSİYON / DONANIM MEDYA TUŞLARI DESTEĞİ
+   Tesla ve Android tabanlı araç multimedya sistemlerinde direksiyon
+   üzerindeki ses ve kanal (parça) tuşları, tarayıcıya iki farklı
+   yoldan iletilir. İkisini de destekliyoruz:
+   1) Media Session API — Tesla/iOS/çoğu modern tarayıcı bunu kullanır
+   2) Standart donanım tuş kodları (AudioVolumeUp/Down, MediaTrackNext...)
+      — Android Automotive / aftermarket Android multimedya üniteleri
+   ================================================================ */
+
+/* 1) MEDIA SESSION API */
+if ('mediaSession' in navigator) {
+  try {
+    navigator.mediaSession.setActionHandler('play', () => play());
+    navigator.mediaSession.setActionHandler('pause', () => pause());
+    navigator.mediaSession.setActionHandler('previoustrack', () => step(-1));
+    navigator.mediaSession.setActionHandler('nexttrack', () => step(1));
+    // Bazı direksiyonlar "sar" tuşlarını da kanal değiştirmek için kullanır
+    navigator.mediaSession.setActionHandler('seekbackward', () => step(-1));
+    navigator.mediaSession.setActionHandler('seekforward', () => step(1));
+  } catch (e) {}
+}
+
+function updateMediaSessionMeta() {
+  if (!('mediaSession' in navigator) || !STATIONS[currentKey]) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: STATIONS[currentKey].title,
+      artist: STATIONS[currentKey].cat || 'Tesla Automotive Radio DSP',
+      album: 'Canlı Yayın'
+    });
+    navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+  } catch (e) {}
+}
+// selectStation ve play/pause her çağrıldığında meta bilgisini tazele
+const _origSelectStationForMedia = selectStation;
+selectStation = function (key) { _origSelectStationForMedia(key); updateMediaSessionMeta(); };
+const _origPlayForMedia = play, _origPauseForMedia = pause;
+play = function () { _origPlayForMedia(); updateMediaSessionMeta(); };
+pause = function () { _origPauseForMedia(); updateMediaSessionMeta(); };
+
+/* 2) STANDART DONANIM TUŞ KODLARI (Android multimedya üniteleri) */
+function stepVolume(delta) {
+  const newVol = Math.max(0, Math.min(1, audio.volume + delta));
+  audio.volume = newVol;
+  syncVolumeUI(newVol);
+}
+document.addEventListener('keydown', (e) => {
+  switch (e.key) {
+    case 'AudioVolumeUp': e.preventDefault(); stepVolume(0.05); break;
+    case 'AudioVolumeDown': e.preventDefault(); stepVolume(-0.05); break;
+    case 'AudioVolumeMute': e.preventDefault(); toggleMute(); break;
+    case 'MediaTrackNext': case 'ChannelUp': e.preventDefault(); step(1); break;
+    case 'MediaTrackPrevious': case 'ChannelDown': e.preventDefault(); step(-1); break;
+    case 'MediaPlayPause': e.preventDefault(); isPlaying ? pause() : play(); break;
+    case 'MediaPlay': e.preventDefault(); play(); break;
+    case 'MediaPause': case 'MediaStop': e.preventDefault(); pause(); break;
   }
 });
 
