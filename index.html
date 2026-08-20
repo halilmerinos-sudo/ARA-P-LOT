@@ -683,7 +683,7 @@
     --card-accent: #00e5ff;
     position: relative; background: #101114; border: 2px solid #23252b; border-radius: 16px;
     padding: 16px 16px 14px; text-align: left; cursor: pointer; overflow: hidden;
-    display: flex; flex-direction: column; gap: 8px;
+    display: flex; flex-direction: column; gap: 8px; min-height: 108px;
     opacity: 0; transform: translateY(14px) scale(0.96);
     animation: clbCardIn 0.4s cubic-bezier(.2,.8,.2,1) forwards;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
@@ -703,11 +703,13 @@
     box-shadow: 0 0 22px -4px var(--card-accent);
   }
   .clb-card-top { display: flex; align-items: center; justify-content: space-between; }
-  .clb-card-freq {
-    font-family: 'Consolas', monospace; font-weight: 900; font-size: 15px; color: var(--card-accent);
+  .clb-card-freq { font-family: 'Consolas', monospace; font-weight: 900; font-size: 15px; color: var(--card-accent); white-space: nowrap; flex-shrink: 0; }
+  .clb-card-name {
+    font-size: 18px; font-weight: 900; color: #fff; line-height: 1.25;
+    overflow-wrap: break-word; word-break: break-word;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .clb-card-name { font-size: 19px; font-weight: 900; color: #fff; line-height: 1.2; }
-  .clb-card-cat { font-size: 12px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.4px; }
+  .clb-card-cat { font-size: 12px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.4px; overflow-wrap: break-word; white-space: normal; }
   .clb-eq { display: flex; align-items: flex-end; gap: 2px; height: 15px; }
   .clb-eq span { width: 3px; background: var(--card-accent); border-radius: 1px; animation: rowEqBar 0.9s ease-in-out infinite; }
   .clb-eq span:nth-child(1) { height: 40%; animation-delay: 0s; }
@@ -733,11 +735,11 @@
     display: flex; flex-direction: column; gap: 4px; background: #101114; border: 1px solid #23252b;
     border-radius: 10px; padding: 10px 12px;
   }
-  .gps-stat-label { font-size: 12.5px; font-weight: 900; color: var(--text-muted); letter-spacing: 0.8px; }
+  .gps-stat-label { font-size: 12.5px; font-weight: 900; color: var(--nav-muted); letter-spacing: 0.8px; }
   .gps-stat-val { font-size: 22px; font-weight: 900; color: #fff; }
 
   .gps-limit-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; text-align: left; }
-  .gps-limit-row label.small { font-size: 13px !important; font-weight: 800; color: var(--text-muted); }
+  .gps-limit-row label.small { font-size: 13px !important; font-weight: 800; color: var(--nav-muted); }
   .gps-limit-row input[type="number"] {
     background: #050506; border: 1px solid #2a2c33; color: #fff;
     padding: 7px 10px; border-radius: 8px; font-size: 13px; font-family: inherit; width: 100%;
@@ -749,11 +751,12 @@
     display: none; position: fixed; inset: 0; z-index: 9999;
     background: #050608; font-family: inherit;
     padding: 14px; align-items: center; justify-content: center;
+    --nav-muted: #9aa0ad;
   }
   .nav-overlay.show { display: flex; }
 
   .nav-card {
-    width: 100%; max-width: 900px; max-height: 100%; overflow-y: auto;
+    width: 100%; max-width: min(1100px, 96vw); max-height: 100%; overflow-y: auto;
     background: linear-gradient(180deg, #14161c 0%, #0a0b0e 100%);
     border: 1px solid rgba(255,255,255,0.08); border-radius: 26px;
     padding: 18px 22px 14px; box-shadow: 0 0 40px rgba(0,229,255,0.06), 0 20px 50px rgba(0,0,0,0.6);
@@ -770,7 +773,7 @@
   }
   .nav-icon-btn.small { width: 28px; height: 28px; font-size: 12px; }
   .nav-icon-btn:active { transform: scale(0.92); }
-  .nav-gps-label { text-align: center; font-size: 13px; font-weight: 900; color: var(--text-muted); letter-spacing: 0.6px; margin-top: 4px; margin-bottom: 8px; }
+  .nav-gps-label { text-align: center; font-size: 13px; font-weight: 900; color: var(--nav-muted); letter-spacing: 0.6px; margin-top: 4px; margin-bottom: 8px; }
 
   .nav-main-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
   .nav-side-cards { display: flex; flex-direction: column; gap: 12px; flex: 1; min-width: 0; }
@@ -779,9 +782,9 @@
     background: #16181d; border: 1px solid #22242b; border-radius: 14px; padding: 12px 14px;
   }
   .nsc-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  .nsc-label { font-size: 12px; font-weight: 900; color: var(--text-muted); letter-spacing: 0.7px; }
+  .nsc-label { font-size: 12px; font-weight: 900; color: var(--nav-muted); letter-spacing: 0.7px; }
   .nsc-value { font-size: 22px; font-weight: 900; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .nsc-value small { font-size: 12px; font-weight: 800; color: var(--text-muted); margin-left: 3px; }
+  .nsc-value small { font-size: 12px; font-weight: 800; color: var(--nav-muted); margin-left: 3px; }
   .nsc-icon-circle {
     width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center; font-size: 18px;
@@ -812,11 +815,11 @@
     text-shadow: 0 0 18px rgba(0,229,255,0.45); line-height: 1;
   }
   .nav-gauge-wrap.over-limit .gps-speed-val { color: var(--accent-red); text-shadow: 0 0 16px rgba(255,61,0,0.7); }
-  .nav-gauge-unit { font-size: 15px; font-weight: 900; color: var(--text-muted); letter-spacing: 2.5px; margin-top: 4px; }
+  .nav-gauge-unit { font-size: 15px; font-weight: 900; color: var(--nav-muted); letter-spacing: 2.5px; margin-top: 4px; }
 
   .nav-avg-row { text-align: center; margin: 10px 0 6px; }
   .nav-avg-val { font-size: 23px; font-weight: 900; color: #fff; }
-  .nav-avg-label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); letter-spacing: 1.2px; margin-top: 3px; }
+  .nav-avg-label { display: block; font-size: 12px; font-weight: 800; color: var(--nav-muted); letter-spacing: 1.2px; margin-top: 3px; }
 
   .nav-dest-banner {
     display: none; align-items: center; gap: 12px; margin: 4px auto 10px; width: fit-content;
@@ -826,7 +829,7 @@
   .nav-dest-arrow { font-size: 26px; color: var(--accent-cyan); transition: transform 0.3s ease-out; display: inline-block; }
   .nav-dest-info { display: flex; flex-direction: column; }
   .nav-dest-dist { font-size: 19px; font-weight: 900; color: #fff; }
-  .nav-dest-label { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+  .nav-dest-label { font-size: 11px; color: var(--nav-muted); font-weight: 700; }
 
   .nav-search-row {
     display: flex; align-items: center; gap: 10px; background: #101114; border: 1px solid #23252b;
@@ -866,7 +869,7 @@
   }
   .ngsb-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .ngsb-label { font-size: 13px; font-weight: 900; color: #fff; }
-  .ngsb-hint { font-size: 10.5px; color: var(--text-muted); line-height: 1.5; margin-top: 8px; }
+  .ngsb-hint { font-size: 10.5px; color: var(--nav-muted); line-height: 1.5; margin-top: 8px; }
 
   /* GPS TEŞHİS / YARDIM KUTUSU */
   .nav-help-box {
@@ -875,7 +878,7 @@
   }
   .nav-help-box.show { display: block; }
   .nhb-title { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 8px; }
-  .nhb-body { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; white-space: pre-line; }
+  .nhb-body { font-size: 12.5px; color: var(--nav-muted); line-height: 1.6; white-space: pre-line; }
   .nav-toggle-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
   .nav-switch-label {
     display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800;
@@ -885,7 +888,7 @@
   .nav-switch-label input { accent-color: var(--accent-cyan); width: 15px; height: 15px; }
 
   /* GECE / GÜNDÜZ TEMASI */
-  .nav-overlay.day-mode { background: #eef1f4; }
+  .nav-overlay.day-mode { background: #eef1f4; --nav-muted: #6b7280; }
   .nav-overlay.day-mode .nav-card { background: linear-gradient(180deg, #ffffff 0%, #f0f2f5 100%); border-color: rgba(0,0,0,0.08); }
   .nav-overlay.day-mode .nav-clock, .nav-overlay.day-mode .gps-speed-val, .nav-overlay.day-mode .nsc-value { color: #1a1a1a; }
   .nav-overlay.day-mode .nav-icon-btn { background: rgba(0,0,0,0.05); color: #333; border-color: rgba(0,0,0,0.08); }
@@ -895,17 +898,21 @@
   .nav-overlay.day-mode .ngs-bg { stroke: rgba(0,0,0,0.06); }
   .nav-overlay.day-mode .gps-stat { background: #f2f3f5; border-color: #e0e2e6; }
   .nav-overlay.day-mode .gps-stat-val { color: #1a1a1a; }
-  .nav-overlay.day-mode .gps-stat-label { color: #888; }
   .nav-overlay.day-mode .nav-switch-label { background: #f2f3f5; border-color: #e0e2e6; color: #555; }
   .nav-overlay.day-mode .gps-limit-row input[type="number"] { background: #f7f7f8; border-color: #ddd; color: #1a1a1a; }
   .nav-overlay.day-mode .nav-settings-sheet { background: rgba(255,255,255,0.97); border-top-color: rgba(0,0,0,0.08); }
   .nav-overlay.day-mode .nav-bottom-nav { border-top-color: rgba(0,0,0,0.08); }
   .nav-overlay.day-mode .nbn-btn { color: #888; }
+  .nav-overlay.day-mode .nav-gps-source-box { background: #f5f6f8; border-color: #e2e4e8; }
+  .nav-overlay.day-mode .ngsb-label { color: #1a1a1a; }
+  .nav-overlay.day-mode .nav-help-box { background: rgba(255,145,0,0.1); }
+  .nav-overlay.day-mode .nhb-title { color: #1a1a1a; }
+  .nav-overlay.day-mode .nav-dest-dist { color: #1a1a1a; }
 
   /* ===== YATAY (LANDSCAPE) TAM EKRAN DÜZENİ ===== */
   @media (orientation: landscape) and (max-height: 560px) {
     .nav-overlay { padding: 6px; }
-    .nav-card { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; max-height: 96vh; padding: 12px 16px 8px; overflow-y: auto; }
+    .nav-card { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; max-height: 96vh; max-width: min(1300px, 98vw); padding: 12px 16px 8px; overflow-y: auto; }
     .nav-status-bar, .nav-gps-label { grid-column: 1 / 3; }
     .nav-gps-label { font-size: 10px; margin-bottom: 4px; }
     .nav-clock { font-size: 18px; }
@@ -968,6 +975,15 @@
   body.driving-mode .dash-block.eq-block { display: none; }
   body.driving-mode .controls-block .btn-ctrl { font-size: 36px; padding: 20px; }
   body.driving-mode .speaker-unit { width: 78px; height: 108px; }
+
+  /* SÜRÜŞ MODUNDA: kanal listesi butonu gizlenir (favoriler zaten hazır listelenir),
+     navigasyon butonu öne çıkar */
+  body.driving-mode #channelListBtn { display: none !important; }
+  body.driving-mode #gpsBtn {
+    background: linear-gradient(180deg, var(--accent-cyan) 0%, #007a94 100%);
+    border-color: var(--accent-cyan); color: #002b33; font-weight: 900;
+    box-shadow: 0 0 16px rgba(0,229,255,0.55);
+  }
 
   /* SÜRÜŞ MODU ANA SES BARI (iki tarafta büyütülmüş hoparlör ikonları) */
   .driving-volume-row {
