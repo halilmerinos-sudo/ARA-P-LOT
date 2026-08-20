@@ -93,6 +93,11 @@
     .gps-speed-val { font-size: 42px; }
     .gps-main-row { gap: 14px; }
     .gps-stat-val { font-size: 17px; }
+    .dc-main-row { flex-direction: column; gap: 10px; padding-top: 24px; }
+    .dc-ring-wrap { width: 84px; height: 84px; }
+    .dc-ring-val { font-size: 22px; }
+    .dc-speed-big { font-size: 42px; }
+    .driving-cluster { overflow-y: auto; }
   }
   @media (max-width: 420px) {
     .header-right .btn-preset { font-size: 11px; padding: 5px 9px; border-radius: 16px; }
@@ -149,6 +154,16 @@
     table.station-table th { padding: 6px 10px; font-size: 11px; }
     table.station-table td { padding: 6px 10px; font-size: 13px; }
     footer { padding: 4px 10px; font-size: 10px; }
+    .driving-cluster { padding: 6px 12px; gap: 4px; }
+    .dc-ring-wrap { width: 90px; height: 90px; }
+    .dc-ring-val { font-size: 20px; }
+    .dc-ring-unit { font-size: 7.5px; }
+    .dc-speed-big { font-size: 38px; }
+    .dc-speed-big small { font-size: 10px; }
+    .dc-car-scene { width: 80px; height: 46px; }
+    .dc-mode-badge { font-size: 9px; padding: 3px 9px; }
+    .dc-bb-item { font-size: 10px; }
+    .dc-main-row { padding-top: 12px; }
   }
   @media (max-height: 480px) {
     .app-container { gap: 3px; padding: 4px; }
@@ -167,6 +182,18 @@
     .weather-icon { font-size: 13px; }
     .weather-temp { font-size: 12px; }
     .weather-desc { display: none; }
+    .driving-cluster { padding: 4px 8px; }
+    .dc-ring-wrap { width: 66px; height: 66px; }
+    .dc-ring-val { font-size: 15px; }
+    .dc-ring-unit { display: none; }
+    .dc-speed-big { font-size: 28px; }
+    .dc-speed-big small { font-size: 8px; }
+    .dc-car-scene { display: none; }
+    .dc-turn-icon { font-size: 12px; }
+    .dc-limit-sign { width: 28px; height: 28px; font-size: 12px; border-width: 3px; }
+    .dc-mode-badge { display: none; }
+    .dc-bb-item { font-size: 9px; }
+    .dc-top-icons { display: none; }
   }
 
   .title-bar {
@@ -970,20 +997,75 @@
   body.driving-mode .recent-strip,
   body.driving-mode .table-container,
   body.driving-mode .dsp-bar { display: none !important; }
-  body.driving-mode .driving-fav-grid { display: grid; }
+  body.driving-mode .driving-fav-grid { display: none !important; }
   body.driving-mode .main-dashboard { grid-template-columns: 1fr 1.3fr; }
   body.driving-mode .dash-block.eq-block { display: none; }
   body.driving-mode .controls-block .btn-ctrl { font-size: 36px; padding: 20px; }
   body.driving-mode .speaker-unit { width: 78px; height: 108px; }
 
-  /* SÜRÜŞ MODUNDA: kanal listesi butonu gizlenir (favoriler zaten hazır listelenir),
-     navigasyon butonu öne çıkar */
-  body.driving-mode #channelListBtn { display: none !important; }
+  /* SÜRÜŞ MODUNDA: gereksiz butonlar gizlenir, sadece temel kontroller kalır,
+     kanal listesi yerine navigasyon gömülü olarak alt tarafta gösterilir */
+  body.driving-mode #channelListBtn,
+  body.driving-mode #toolsBtn,
+  body.driving-mode #muteBtn,
+  body.driving-mode #sleepToggle,
+  body.driving-mode #themeToggle,
+  body.driving-mode #btnOpenTvPanel { display: none !important; }
   body.driving-mode #gpsBtn {
     background: linear-gradient(180deg, var(--accent-cyan) 0%, #007a94 100%);
     border-color: var(--accent-cyan); color: #002b33; font-weight: 900;
     box-shadow: 0 0 16px rgba(0,229,255,0.55);
   }
+
+  /* ===== SÜRÜŞ MODU GÖMÜLÜ NAVİGASYON (Tesla küme tarzı) ===== */
+  .driving-cluster {
+    display: none; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0;
+    background: radial-gradient(ellipse at 50% 20%, #10151c 0%, #05070a 75%);
+    border: 2px solid var(--panel-border); border-radius: 14px;
+    padding: 10px 18px; position: relative; overflow: hidden;
+  }
+  body.driving-mode .driving-cluster { display: flex; }
+
+  .dc-top-icons { position: absolute; top: 8px; display: flex; gap: 10px; z-index: 2; }
+  .dc-top-icons.left { left: 14px; }
+  .dc-top-icons.right { right: 14px; }
+  .dc-mini-icon { font-size: 13px; opacity: 0.6; }
+  #dcGpsDot.ok { opacity: 1; filter: drop-shadow(0 0 4px var(--accent-green)); animation: gpsBlink 1.6s infinite; }
+  #dcGpsDot.err { opacity: 1; filter: drop-shadow(0 0 4px var(--accent-red)); }
+
+  .dc-main-row { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: space-between; gap: 4px; padding-top: 18px; }
+  .dc-ring-wrap { position: relative; width: 128px; height: 128px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .dc-ring-svg { width: 100%; height: 100%; }
+  .dc-ring-svg .ngs-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 447.68 596.9; }
+  .dc-ring-svg .ngs-fg { fill: none; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 447.68 596.9; stroke-dashoffset: 447.68; transition: stroke-dashoffset 0.25s ease-out; filter: drop-shadow(0 0 5px rgba(0,229,255,0.5)); }
+  .dc-ring-center { position: absolute; display: flex; flex-direction: column; align-items: center; }
+  .dc-ring-val { font-family: 'Consolas', monospace; font-size: 30px; font-weight: 900; color: #fff; line-height: 1; }
+  .dc-ring-unit { font-size: 9px; font-weight: 900; color: var(--nav-muted, #9aa0ad); letter-spacing: 1.5px; margin-top: 3px; }
+
+  .dc-center-stage { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; min-width: 0; }
+  .dc-turn-row { display: flex; align-items: center; gap: 16px; }
+  .dc-turn-icon { font-size: 16px; color: #444; transition: color 0.2s ease, transform 0.2s ease; }
+  .dc-turn-icon.active { color: var(--accent-green); text-shadow: 0 0 8px rgba(34,197,94,0.6); }
+  .dc-limit-sign {
+    width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 4px solid #e11d1d;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; color: #111; box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  }
+  .dc-speed-big { font-family: 'Consolas', monospace; font-size: 54px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 0 16px rgba(0,229,255,0.4); }
+  .dc-speed-big small { font-size: 13px; font-weight: 900; color: var(--nav-muted, #9aa0ad); margin-left: 6px; letter-spacing: 1px; }
+  .dc-car-scene { width: 110px; height: 64px; position: relative; }
+  .dc-car-svg { width: 100%; height: 100%; }
+  .dc-mode-badge {
+    background: rgba(0,229,255,0.14); border: 1px solid var(--accent-cyan); color: var(--accent-cyan);
+    font-size: 10.5px; font-weight: 900; letter-spacing: 0.5px; border-radius: 20px; padding: 4px 12px;
+  }
+
+  .dc-bottom-bar {
+    flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; gap: 8px; flex-wrap: wrap;
+  }
+  .dc-bb-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: var(--nav-muted, #9aa0ad); }
+  .dc-bb-center { color: var(--accent-green); font-size: 11px; }
 
   /* SÜRÜŞ MODU ANA SES BARI (iki tarafta büyütülmüş hoparlör ikonları) */
   .driving-volume-row {
@@ -1321,6 +1403,88 @@
   </div>
 
   <div class="driving-fav-grid" id="drivingFavGrid"></div>
+
+  <!-- SÜRÜŞ MODU GÖMÜLÜ NAVİGASYON (Tesla küme tarzı) -->
+  <div class="driving-cluster" id="drivingCluster">
+    <div class="dc-top-icons left">
+      <span class="dc-mini-icon" id="dcGpsDot" title="GPS Durumu">📡</span>
+      <span class="dc-mini-icon">🔊</span>
+    </div>
+    <div class="dc-top-icons right">
+      <span class="dc-mini-icon">🌙</span>
+      <span class="dc-mini-icon">📶</span>
+    </div>
+
+    <div class="dc-main-row">
+      <div class="dc-ring-wrap">
+        <svg class="dc-ring-svg" viewBox="0 0 220 220">
+          <defs>
+            <linearGradient id="dcRingGradL" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00e5ff"/><stop offset="100%" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+          <g transform="rotate(135 110 110)">
+            <circle class="ngs-bg" cx="110" cy="110" r="95"/>
+            <circle class="ngs-fg" id="dcRingArcL" cx="110" cy="110" r="95" stroke="url(#dcRingGradL)"/>
+          </g>
+        </svg>
+        <div class="dc-ring-center">
+          <div class="dc-ring-val" id="dcSpeedVal2">0</div>
+          <div class="dc-ring-unit">KM/H</div>
+        </div>
+      </div>
+
+      <div class="dc-center-stage">
+        <div class="dc-turn-row">
+          <span class="dc-turn-icon left">◀</span>
+          <div class="dc-limit-sign" id="dcLimitSign" style="display:none;">
+            <span id="dcLimitVal">0</span>
+          </div>
+          <span class="dc-turn-icon right active">▶</span>
+        </div>
+        <div class="dc-speed-big" id="dcSpeedVal">0<small>KM/H</small></div>
+        <div class="dc-car-scene">
+          <svg viewBox="0 0 120 90" class="dc-car-svg">
+            <line x1="18" y1="0" x2="10" y2="90" stroke="#2a2c33" stroke-width="3" stroke-dasharray="10 8"/>
+            <line x1="102" y1="0" x2="110" y2="90" stroke="#2a2c33" stroke-width="3" stroke-dasharray="10 8"/>
+            <g transform="translate(60 55)">
+              <rect x="-17" y="-22" width="34" height="44" rx="10" fill="#e8eaee"/>
+              <rect x="-13" y="-16" width="26" height="16" rx="4" fill="#0a0b0e"/>
+              <rect x="-14" y="10" width="28" height="8" rx="3" fill="#0a0b0e" opacity="0.5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="dc-mode-badge" id="dcModeBadge">🚗 SÜRÜŞ MODU AKTİF</div>
+      </div>
+
+      <div class="dc-ring-wrap">
+        <svg class="dc-ring-svg" viewBox="0 0 220 220">
+          <defs>
+            <linearGradient id="dcRingGradR" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00e5ff"/><stop offset="100%" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+          <g transform="rotate(135 110 110)">
+            <circle class="ngs-bg" cx="110" cy="110" r="95"/>
+            <circle class="ngs-fg" id="dcRingArcR" cx="110" cy="110" r="95" stroke="url(#dcRingGradR)"/>
+          </g>
+        </svg>
+        <div class="dc-ring-center">
+          <div class="dc-ring-val" id="dcMaxSpeedVal">0</div>
+          <div class="dc-ring-unit">MAKS</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dc-bottom-bar">
+      <div class="dc-bb-item"><span>🕐</span><span id="dcClock">--:--</span></div>
+      <div class="dc-bb-item"><span>🌡️</span><span id="dcTemp">--°C</span></div>
+      <div class="dc-bb-item dc-bb-center" id="dcGpsStatusText">GPS Kapalı</div>
+      <div class="dc-bb-item"><span>📏</span><span id="dcTripDist">0.00 km</span></div>
+      <div class="dc-bb-item"><span>🧭</span><span id="dcHeading">--°</span></div>
+    </div>
+  </div>
+
 
   <div class="quickslots-strip">
     <span class="rs-label">HIZLI ERİŞİM:</span>
@@ -1745,6 +1909,8 @@ async function fetchWeather() {
       weatherIcon.textContent = info[0];
       weatherTemp.textContent = Math.round(cw.temperature) + '°C';
       weatherDesc.textContent = info[1] + ' · ' + Math.round(cw.windspeed) + 'km/s rüzgar';
+      const dcTempEl = document.getElementById('dcTemp');
+      if (dcTempEl) dcTempEl.textContent = Math.round(cw.temperature) + '°C';
     } else {
       weatherDesc.textContent = 'Veri alınamadı';
     }
@@ -2653,14 +2819,36 @@ const navSettingsCloseBtn = document.getElementById('navSettingsCloseBtn');
 const nbnPlayIcon = document.querySelector('#gpsTripToggleBtn .nbn-play');
 const nbnPauseIcon = document.querySelector('#gpsTripToggleBtn .nbn-pause');
 
+/* Sürüş modu gömülü küme (Tesla tarzı) referansları */
+const drivingCluster = document.getElementById('drivingCluster');
+const dcGpsDot = document.getElementById('dcGpsDot');
+const dcGpsStatusText = document.getElementById('dcGpsStatusText');
+const dcSpeedVal = document.getElementById('dcSpeedVal');
+const dcSpeedVal2 = document.getElementById('dcSpeedVal2');
+const dcMaxSpeedVal = document.getElementById('dcMaxSpeedVal');
+const dcRingArcL = document.getElementById('dcRingArcL');
+const dcRingArcR = document.getElementById('dcRingArcR');
+const dcHeading = document.getElementById('dcHeading');
+const dcTripDist = document.getElementById('dcTripDist');
+const dcClock = document.getElementById('dcClock');
+const dcTemp = document.getElementById('dcTemp');
+const dcLimitSign = document.getElementById('dcLimitSign');
+const dcLimitVal = document.getElementById('dcLimitVal');
+
 /* Gösterge (270° yay) sabitleri */
 const GAUGE_R = 95;
 const GAUGE_C = 2 * Math.PI * GAUGE_R;
 const GAUGE_ARC_LEN = GAUGE_C * 0.75;
 const GAUGE_MAX_SPEED = 200;
+function setArcOffset(el, speedKmh, maxSpeed) {
+  if (!el) return;
+  const frac = Math.max(0, Math.min(1, speedKmh / (maxSpeed || GAUGE_MAX_SPEED)));
+  el.style.strokeDashoffset = (GAUGE_ARC_LEN * (1 - frac)).toFixed(1);
+}
 function updateGaugeArc(speedKmh) {
-  const frac = Math.max(0, Math.min(1, speedKmh / GAUGE_MAX_SPEED));
-  if (navGaugeArc) navGaugeArc.style.strokeDashoffset = (GAUGE_ARC_LEN * (1 - frac)).toFixed(1);
+  setArcOffset(navGaugeArc, speedKmh);
+  setArcOffset(dcRingArcL, speedKmh);
+  setArcOffset(dcRingArcR, tripMaxSpeedKmh);
 }
 
 let gpsWatchId = null, lastGpsPos = null, lastHeading = null;
@@ -2729,8 +2917,11 @@ function updateDestInfo() {
 function onGpsUpdate(pos) {
   gpsRetryCount = 0;
   clearTimeout(gpsRetryTimer);
-  gpsStatus.textContent = useHighAccuracy ? 'GPS Aktif' : 'Ağ Konumu Aktif (Wi-Fi/İnternet)';
+  const statusMsg = useHighAccuracy ? 'GPS Aktif' : 'Ağ Konumu Aktif (Wi-Fi/İnternet)';
+  gpsStatus.textContent = statusMsg;
   gpsStatusDot.classList.add('ok'); gpsStatusDot.classList.remove('err');
+  if (dcGpsStatusText) dcGpsStatusText.textContent = statusMsg;
+  if (dcGpsDot) { dcGpsDot.classList.add('ok'); dcGpsDot.classList.remove('err'); }
 
   const { latitude, longitude, speed, heading, accuracy, altitude } = pos.coords;
   let speedKmh = 0;
@@ -2743,6 +2934,8 @@ function onGpsUpdate(pos) {
   }
   speedKmh = Math.max(0, Math.min(300, speedKmh));
   gpsSpeedVal.textContent = Math.round(speedKmh);
+  if (dcSpeedVal) dcSpeedVal.innerHTML = Math.round(speedKmh) + '<small>KM/H</small>';
+  if (dcSpeedVal2) dcSpeedVal2.textContent = Math.round(speedKmh);
   const drivingGpsChip = document.getElementById('drivingGpsChip');
   if (drivingGpsChip) {
     drivingGpsChip.classList.add('active');
@@ -2755,6 +2948,7 @@ function onGpsUpdate(pos) {
     gpsHeadingVal.textContent = Math.round(headingToUse) + '°';
     const cardinals = ['K', 'KKD', 'KD', 'DKD', 'D', 'DGD', 'GD', 'GGD', 'G', 'GGB', 'GB', 'BGB', 'B', 'BKB', 'KB', 'KKB'];
     gpsHeadingCardinal.textContent = cardinals[Math.round(headingToUse / 22.5) % 16];
+    if (dcHeading) dcHeading.textContent = Math.round(headingToUse) + '°';
     lastHeading = headingToUse;
   }
   gpsAccuracyVal.textContent = accuracy ? Math.round(accuracy) + ' m' : '--';
@@ -2765,12 +2959,16 @@ function onGpsUpdate(pos) {
   gpsSpeedRing.classList.remove('zone-amber');
   if (speedKmh >= 90 && speedKmh < 130) gpsSpeedRing.classList.add('zone-amber');
 
+  if (dcMaxSpeedVal) dcMaxSpeedVal.textContent = Math.round(tripMaxSpeedKmh);
+
   if (tripActive && lastGpsPos) {
     const dKm = haversineKm(lastGpsPos.lat, lastGpsPos.lon, latitude, longitude);
     if (dKm < 0.5) tripDistanceKm += dKm; // GPS sıçramalarını filtrele
     tripMaxSpeedKmh = Math.max(tripMaxSpeedKmh, speedKmh);
     gpsTripDist.textContent = tripDistanceKm.toFixed(2) + ' km';
     gpsTripMax.textContent = Math.round(tripMaxSpeedKmh) + ' km/s';
+    if (dcTripDist) dcTripDist.textContent = tripDistanceKm.toFixed(2) + ' km';
+    if (dcMaxSpeedVal) dcMaxSpeedVal.textContent = Math.round(tripMaxSpeedKmh);
     const currentElapsedMs = tripElapsedMs + (tripSegmentStart ? (Date.now() - tripSegmentStart) : 0);
     const elapsedHr = currentElapsedMs / 3600000;
     gpsTripAvg.textContent = Math.round(elapsedHr > 0 ? tripDistanceKm / elapsedHr : 0) + ' km/s';
@@ -2784,6 +2982,11 @@ function onGpsUpdate(pos) {
     playAlertBeep(); lastSpeedAlertAt = Date.now();
   }
 
+  if (dcLimitSign) {
+    if (speedLimitKmh > 0) { dcLimitSign.style.display = 'flex'; dcLimitVal.textContent = speedLimitKmh; }
+    else { dcLimitSign.style.display = 'none'; }
+  }
+
   if (navDestLatLng) updateDestInfo();
 }
 
@@ -2793,28 +2996,35 @@ let gpsRetryTimer = null;
 
 function onGpsError(err) {
   gpsStatusDot.classList.remove('ok'); gpsStatusDot.classList.add('err');
+  if (dcGpsDot) { dcGpsDot.classList.remove('ok'); dcGpsDot.classList.add('err'); }
 
   // Yüksek hassasiyet modu zaman aşımına uğradı veya konum bulunamadı → ağ tabanlı konuma otomatik geç
   if ((err.code === 3 || err.code === 2) && useHighAccuracy) {
     useHighAccuracy = false;
     gpsStatus.textContent = 'GPS bulunamadı, ağ konumuna geçiliyor...';
+    if (dcGpsStatusText) dcGpsStatusText.textContent = 'Ağ konumuna geçiliyor...';
     stopGpsWatch();
     setTimeout(startGpsWatch, 600);
     return;
   }
 
+  let msg;
   if (err.code === 1) {
-    gpsStatus.textContent = '❌ Konum İzni Reddedildi/Bloklu';
+    msg = '❌ Konum İzni Reddedildi/Bloklu';
+    gpsStatus.textContent = msg;
     showGpsHelp('denied');
   } else if (err.code === 2) {
-    gpsStatus.textContent = '❌ Konum Bilgisi Alınamadı';
+    msg = '❌ Konum Bilgisi Alınamadı';
+    gpsStatus.textContent = msg;
     if (gpsRetryCount >= 3) showGpsHelp('unavailable');
     retryGpsWithBackoff();
   } else {
-    gpsStatus.textContent = '❌ Konum Zaman Aşımı';
+    msg = '❌ Konum Zaman Aşımı';
+    gpsStatus.textContent = msg;
     if (gpsRetryCount >= 3) showGpsHelp('timeout');
     retryGpsWithBackoff();
   }
+  if (dcGpsStatusText) dcGpsStatusText.textContent = msg;
 }
 
 function retryGpsWithBackoff() {
@@ -3053,7 +3263,12 @@ const drivingFavGrid = document.getElementById('drivingFavGrid');
 drivingModeBtn.addEventListener('click', () => {
   const active = document.body.classList.toggle('driving-mode');
   drivingModeBtn.classList.toggle('active', active);
-  if (active) renderDrivingGrid();
+  if (active) {
+    renderDrivingGrid();
+    // Sürüş modu açılınca navigasyon otomatik olarak beraber başlasın
+    startGpsWatch();
+    if (!tripActive) gpsTripToggleBtn.click();
+  }
   setTimeout(resizeWaveCanvas, 50);
 });
 
@@ -3133,9 +3348,11 @@ function tickClock() {
     const clockTimeEl = document.getElementById('clockTime');
     const clockDateEl = document.getElementById('clockDate');
     const navClockEl = document.getElementById('navClock');
+    const dcClockEl = document.getElementById('dcClock');
     if (clockTimeEl) clockTimeEl.textContent = timeStr;
     if (clockDateEl) clockDateEl.textContent = dateStr;
     if (navClockEl) navClockEl.textContent = shortTimeStr;
+    if (dcClockEl) dcClockEl.textContent = shortTimeStr;
   } catch (e) {
     const clockTimeEl = document.getElementById('clockTime');
     if (clockTimeEl) clockTimeEl.textContent = new Date().toLocaleTimeString();
