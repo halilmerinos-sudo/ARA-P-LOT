@@ -1035,9 +1035,15 @@
 
   .dc-main-row { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: space-between; gap: 4px; padding-top: 18px; }
   .dc-ring-wrap { position: relative; width: 128px; height: 128px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-  .dc-ring-svg { width: 100%; height: 100%; }
+  .dc-ring-svg { width: 100%; height: 100%; overflow: visible; }
   .dc-ring-svg .ngs-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 447.68 596.9; }
-  .dc-ring-svg .ngs-fg { fill: none; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 447.68 596.9; stroke-dashoffset: 447.68; transition: stroke-dashoffset 0.25s ease-out; filter: drop-shadow(0 0 5px rgba(0,229,255,0.5)); }
+  .dc-ring-svg .ngs-fg-static { fill: none; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 447.68 596.9; stroke-dashoffset: 0; filter: drop-shadow(0 0 5px rgba(0,229,255,0.4)); }
+  .dc-ring-svg .ngs-tick {
+    stroke: #fff; stroke-width: 4; stroke-linecap: round;
+    transform-box: view-box; transform-origin: 110px 110px; transform: rotate(135deg);
+    transition: transform 0.25s ease-out; filter: drop-shadow(0 0 4px rgba(255,255,255,0.8));
+  }
+  .dc-ring-wrap.over-limit .ngs-tick { stroke: var(--accent-red); filter: drop-shadow(0 0 6px rgba(255,61,0,0.9)); }
   .dc-ring-center { position: absolute; display: flex; flex-direction: column; align-items: center; }
   .dc-ring-val { font-family: 'Consolas', monospace; font-size: 30px; font-weight: 900; color: #fff; line-height: 1; }
   .dc-ring-unit { font-size: 9px; font-weight: 900; color: var(--nav-muted, #9aa0ad); letter-spacing: 1.5px; margin-top: 3px; }
@@ -1420,13 +1426,14 @@
         <svg class="dc-ring-svg" viewBox="0 0 220 220">
           <defs>
             <linearGradient id="dcRingGradL" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#00e5ff"/><stop offset="100%" stop-color="#8b5cf6"/>
+              <stop offset="0%" stop-color="#ff6a00"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#00e5ff"/>
             </linearGradient>
           </defs>
           <g transform="rotate(135 110 110)">
             <circle class="ngs-bg" cx="110" cy="110" r="95"/>
-            <circle class="ngs-fg" id="dcRingArcL" cx="110" cy="110" r="95" stroke="url(#dcRingGradL)"/>
+            <circle class="ngs-fg ngs-fg-static" id="dcRingArcL" cx="110" cy="110" r="95" stroke="url(#dcRingGradL)"/>
           </g>
+          <line class="ngs-tick" id="dcTickL" x1="188" y1="110" x2="205" y2="110"/>
         </svg>
         <div class="dc-ring-center">
           <div class="dc-ring-val" id="dcSpeedVal2">0</div>
@@ -1461,17 +1468,18 @@
         <svg class="dc-ring-svg" viewBox="0 0 220 220">
           <defs>
             <linearGradient id="dcRingGradR" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#00e5ff"/><stop offset="100%" stop-color="#8b5cf6"/>
+              <stop offset="0%" stop-color="#ff6a00"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#00e5ff"/>
             </linearGradient>
           </defs>
           <g transform="rotate(135 110 110)">
             <circle class="ngs-bg" cx="110" cy="110" r="95"/>
-            <circle class="ngs-fg" id="dcRingArcR" cx="110" cy="110" r="95" stroke="url(#dcRingGradR)"/>
+            <circle class="ngs-fg ngs-fg-static" id="dcRingArcR" cx="110" cy="110" r="95" stroke="url(#dcRingGradR)"/>
           </g>
+          <line class="ngs-tick" id="dcTickR" x1="188" y1="110" x2="205" y2="110"/>
         </svg>
         <div class="dc-ring-center">
           <div class="dc-ring-val" id="dcMaxSpeedVal">0</div>
-          <div class="dc-ring-unit">MAKS</div>
+          <div class="dc-ring-unit">KM/H</div>
         </div>
       </div>
     </div>
@@ -1583,7 +1591,8 @@
     <div class="nav-help-box" id="gpsHelpBox">
       <div class="nhb-title" id="gpsHelpTitle">Başlık</div>
       <div class="nhb-body" id="gpsHelpBody">Açıklama</div>
-      <button class="btn-preset confirm" id="gpsHelpCloseBtn" tabindex="0" data-row="1" style="width:100%; margin-top:8px;">Anladım</button>
+      <button class="btn-preset confirm" id="gpsHelpActionBtn" tabindex="0" data-row="1" style="width:100%; margin-top:8px; display:none;"></button>
+      <button class="btn-preset" id="gpsHelpCloseBtn" tabindex="0" data-row="1" style="width:100%; margin-top:8px;">Anladım</button>
     </div>
 
     <div class="nav-main-row">
@@ -2826,8 +2835,9 @@ const dcGpsStatusText = document.getElementById('dcGpsStatusText');
 const dcSpeedVal = document.getElementById('dcSpeedVal');
 const dcSpeedVal2 = document.getElementById('dcSpeedVal2');
 const dcMaxSpeedVal = document.getElementById('dcMaxSpeedVal');
-const dcRingArcL = document.getElementById('dcRingArcL');
-const dcRingArcR = document.getElementById('dcRingArcR');
+const dcTickL = document.getElementById('dcTickL');
+const dcTickR = document.getElementById('dcTickR');
+const dcRingWraps = document.querySelectorAll('.dc-ring-wrap');
 const dcHeading = document.getElementById('dcHeading');
 const dcTripDist = document.getElementById('dcTripDist');
 const dcClock = document.getElementById('dcClock');
@@ -2845,10 +2855,17 @@ function setArcOffset(el, speedKmh, maxSpeed) {
   const frac = Math.max(0, Math.min(1, speedKmh / (maxSpeed || GAUGE_MAX_SPEED)));
   el.style.strokeDashoffset = (GAUGE_ARC_LEN * (1 - frac)).toFixed(1);
 }
+function setTick(el, speedKmh, maxSpeed) {
+  if (!el) return;
+  const frac = Math.max(0, Math.min(1, speedKmh / (maxSpeed || GAUGE_MAX_SPEED)));
+  el.style.transform = `rotate(${(135 + frac * 270).toFixed(1)}deg)`;
+}
 function updateGaugeArc(speedKmh) {
   setArcOffset(navGaugeArc, speedKmh);
-  setArcOffset(dcRingArcL, speedKmh);
-  setArcOffset(dcRingArcR, tripMaxSpeedKmh);
+  setTick(dcTickL, speedKmh);
+  setTick(dcTickR, speedKmh);
+  const overLimit = speedLimitKmh > 0 && speedKmh > speedLimitKmh;
+  dcRingWraps.forEach(w => w.classList.toggle('over-limit', overLimit));
 }
 
 let gpsWatchId = null, lastGpsPos = null, lastHeading = null;
@@ -2959,7 +2976,7 @@ function onGpsUpdate(pos) {
   gpsSpeedRing.classList.remove('zone-amber');
   if (speedKmh >= 90 && speedKmh < 130) gpsSpeedRing.classList.add('zone-amber');
 
-  if (dcMaxSpeedVal) dcMaxSpeedVal.textContent = Math.round(tripMaxSpeedKmh);
+  if (dcMaxSpeedVal) dcMaxSpeedVal.textContent = Math.round(speedKmh);
 
   if (tripActive && lastGpsPos) {
     const dKm = haversineKm(lastGpsPos.lat, lastGpsPos.lon, latitude, longitude);
@@ -2968,7 +2985,6 @@ function onGpsUpdate(pos) {
     gpsTripDist.textContent = tripDistanceKm.toFixed(2) + ' km';
     gpsTripMax.textContent = Math.round(tripMaxSpeedKmh) + ' km/s';
     if (dcTripDist) dcTripDist.textContent = tripDistanceKm.toFixed(2) + ' km';
-    if (dcMaxSpeedVal) dcMaxSpeedVal.textContent = Math.round(tripMaxSpeedKmh);
     const currentElapsedMs = tripElapsedMs + (tripSegmentStart ? (Date.now() - tripSegmentStart) : 0);
     const elapsedHr = currentElapsedMs / 3600000;
     gpsTripAvg.textContent = Math.round(elapsedHr > 0 ? tripDistanceKm / elapsedHr : 0) + ' km/s';
@@ -2997,6 +3013,32 @@ let gpsRetryTimer = null;
 function onGpsError(err) {
   gpsStatusDot.classList.remove('ok'); gpsStatusDot.classList.add('err');
   if (dcGpsDot) { dcGpsDot.classList.remove('ok'); dcGpsDot.classList.add('err'); }
+
+  // WebToApp/benzeri APK sarmalayıcılar hatanın gerçek nedenini appMessage ile bildirir
+  const appMsg = err.appMessage;
+  if (appMsg) {
+    if (appMsg === 'Permission denied permanently') {
+      const msg = '🔒 Uygulamaya Konum İzni Verilmemiş';
+      gpsStatus.textContent = msg;
+      if (dcGpsStatusText) dcGpsStatusText.textContent = msg;
+      showGpsHelp('appPermPermanent');
+      return;
+    }
+    if (appMsg === 'Location service disabled') {
+      const msg = '📍 Cihazda Konum Servisi Kapalı';
+      gpsStatus.textContent = msg;
+      if (dcGpsStatusText) dcGpsStatusText.textContent = msg;
+      showGpsHelp('deviceLocationOff');
+      return;
+    }
+    if (appMsg === 'Permission denied') {
+      const msg = '🔄 Konum İzni Reddedildi (tekrar denenebilir)';
+      gpsStatus.textContent = msg;
+      if (dcGpsStatusText) dcGpsStatusText.textContent = msg;
+      retryGpsWithBackoff();
+      return;
+    }
+  }
 
   // Yüksek hassasiyet modu zaman aşımına uğradı veya konum bulunamadı → ağ tabanlı konuma otomatik geç
   if ((err.code === 3 || err.code === 2) && useHighAccuracy) {
@@ -3094,6 +3136,16 @@ const GPS_HELP_TEXTS = {
   unsupported: {
     title: '⚠️ Desteklenmeyen Tarayıcı',
     body: 'Bu tarayıcı/WebView konum servisini (Geolocation API) desteklemiyor. Aracın multimedya sistemi eski bir tarayıcı motoru kullanıyor olabilir. Mümkünse aracın tarayıcı/sistem yazılımını güncelleyin veya Chrome tabanlı güncel bir tarayıcı kullanın.'
+  },
+  appPermPermanent: {
+    title: '🔒 Uygulamaya Konum İzni Verilmemiş',
+    body: 'APK olarak paketlenmiş bu uygulamaya konum izni kalıcı olarak reddedilmiş veya hiç verilmemiş. Aşağıdaki "Uygulama Ayarlarını Aç" butonuna basarak doğrudan bu uygulamanın izin ekranına gidebilir ve Konum iznini "İzin Ver" yapabilirsiniz.',
+    action: 'app'
+  },
+  deviceLocationOff: {
+    title: '📍 Cihazda Konum Servisi Kapalı',
+    body: 'Uygulamaya izin verilmiş ama telefonun/ünitenin genel Konum (GPS) servisi kapalı. Aşağıdaki "Cihaz Konum Ayarlarını Aç" butonuna basarak konum servisini açabilirsiniz.',
+    action: 'device'
   }
 };
 function showGpsHelp(key) {
@@ -3102,6 +3154,21 @@ function showGpsHelp(key) {
   gpsHelpTitle.textContent = info.title;
   gpsHelpBody.textContent = info.body;
   gpsHelpBox.classList.add('show');
+
+  // WebToApp tarzı APK sarmalayıcılarda doğrudan ayar açma butonlarını göster
+  if (gpsHelpActionBtn) {
+    if (info.action === 'app' && typeof window.openAppLocationSettings === 'function') {
+      gpsHelpActionBtn.style.display = 'block';
+      gpsHelpActionBtn.textContent = '📱 Uygulama Ayarlarını Aç';
+      gpsHelpActionBtn.onclick = () => window.openAppLocationSettings();
+    } else if (info.action === 'device' && typeof window.openDeviceLocationSettings === 'function') {
+      gpsHelpActionBtn.style.display = 'block';
+      gpsHelpActionBtn.textContent = '📍 Cihaz Konum Ayarlarını Aç';
+      gpsHelpActionBtn.onclick = () => window.openDeviceLocationSettings();
+    } else {
+      gpsHelpActionBtn.style.display = 'none';
+    }
+  }
 }
 
 gpsBtn.addEventListener('click', () => {
@@ -3151,6 +3218,7 @@ const gpsHelpBox = document.getElementById('gpsHelpBox');
 const gpsHelpTitle = document.getElementById('gpsHelpTitle');
 const gpsHelpBody = document.getElementById('gpsHelpBody');
 const gpsHelpCloseBtn = document.getElementById('gpsHelpCloseBtn');
+const gpsHelpActionBtn = document.getElementById('gpsHelpActionBtn');
 if (gpsHelpCloseBtn) gpsHelpCloseBtn.addEventListener('click', () => gpsHelpBox.classList.remove('show'));
 navHighAccuracyToggle.addEventListener('change', () => {
   useHighAccuracy = navHighAccuracyToggle.checked;
